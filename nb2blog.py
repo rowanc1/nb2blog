@@ -1,8 +1,6 @@
 #!/usr/local/bin/python
 import requests, argparse, p3c, os, json, subprocess, keyring
 
-p3c.Comms.host = 'local'
-
 
 def main():
     parser = argparse.ArgumentParser(description='Upload a notebook to a gist and 3point/SimPEG blog.')
