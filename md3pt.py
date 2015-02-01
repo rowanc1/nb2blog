@@ -68,14 +68,14 @@ def main():
 
         """)
 
-    # Check if the gistURL is in the meta dict, and post to gist.github.com
-    if 'gistURL' in meta:
-        url = meta['gistURL']
+    # Check if the source is in the meta dict, and post to gist.github.com
+    if 'source' in meta and 'api.github.com/gists' in meta['source']:
+        url = meta['source']
         resp = requests.patch("%s?access_token=%s"%(url,token), data=json.dumps(data))
-    else:
+    elif 'source' not in meta:
         resp = requests.post("https://api.github.com/gists?access_token=%s"%token, data=json.dumps(data))
         url  = resp.json()['url']
-        meta["gistURL"] = url
+        meta["source"] = url
 
 
     data3pt = {
@@ -83,7 +83,7 @@ def main():
         'isMarkdown': True,
     }
 
-    for key in ['title', 'description', 'group', 'tag', 'tooltip']:
+    for key in ['title', 'description', 'group', 'tag', 'tooltip', 'source', 'license']:
         if meta.get(key, None):
             data3pt[key] = meta[key]
 
@@ -101,7 +101,8 @@ def main():
         f.write(':%s: %s\n'%(key, meta3pt[key]))
     for key in ["tag", "group"]:
         f.write(':%s: %s\n'%(key, ','.join(meta3pt[key])))
-    f.write(':%s: %s\n'%('gistURL', meta['gistURL']))
+    for key in ["license", "source"]:
+        f.write(':%s: %s\n'%(key, meta3pt[key]))
     f.write("\n")
     f.write(mdNoMeta)
     f.close()
