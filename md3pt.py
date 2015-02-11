@@ -69,9 +69,9 @@ def main():
         """)
 
     # Check if the source is in the meta dict, and post to gist.github.com
-    if 'source' in meta and 'api.github.com/gists' in meta['source']:
-        url = meta['source']
-        resp = requests.patch("%s?access_token=%s"%(url,token), data=json.dumps(data))
+    if 'source' in meta and ('api.github.com/gists/' in meta['source'] or 'gist.github.com/' in meta['source']):
+        gistId = meta['source'].split('/')[-1].strip('.git')
+        resp = requests.patch("https://api.github.com/gists/%s?access_token=%s"%(gistId,token), data=json.dumps(data))
     elif 'source' not in meta:
         resp = requests.post("https://api.github.com/gists?access_token=%s"%token, data=json.dumps(data))
         url  = resp.json()['url']
